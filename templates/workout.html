@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ w.date }} {{ w.routine_name }} — Gym Tracker{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <a class="back" href="{{ url_for('history') }}">← History</a>
+    <h1>{{ w.routine_name }}</h1>
+    <p class="muted">{{ w.date }}</p>
+  </div>
+</div>
+
+<div class="exercise-list">
+  {% for ex_name, rows in by_ex.items() %}
+  <div class="card exercise-row">
+    <h3>{{ ex_name }}</h3>
+    <div class="sets">
+      {% for r in rows %}
+      <span class="set-chip">S{{ r.set_number }}:
+        {{ r.weight | wt }}{% if r.reps is not none %} × {{ r.reps }}{% endif %}
+      </span>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<form method="post" action="{{ url_for('workout_delete', workout_id=w.id) }}"
+      onsubmit="return confirm('Delete this workout?');" class="delete-form">
+  <button type="submit" class="btn danger">Delete workout</button>
+</form>
+{% endblock %}

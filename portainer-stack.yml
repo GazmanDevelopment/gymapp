@@ -1,0 +1,18 @@
+# Portainer stack for Synology — paste this into Portainer ▸ Stacks ▸ Add stack ▸ Web editor.
+# Assumes you have already built the image on the NAS as gymtracker:latest
+# (see DEPLOY-SYNOLOGY.md). No build context is needed here.
+services:
+  gymtracker:
+    image: gymtracker:latest
+    container_name: gymtracker
+    ports:
+      - "8800:8000"          # host:container — change 8800 if that port is taken
+    environment:
+      APP_USERNAME: gareth
+      APP_PASSWORD: CHANGE_ME_NOW
+      SECRET_KEY: PASTE_A_LONG_RANDOM_HEX
+      GYM_DB_PATH: /data/gym.db
+      GYM_XLSX_PATH: /app/Exercises_2.xlsx   # spreadsheet is baked into the image
+    volumes:
+      - /volume1/docker/gymtracker/data:/data   # DB persists here, visible in File Station
+    restart: unless-stopped

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ routine.name }} — Gym Tracker{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <a class="back" href="{{ url_for('routines') }}">← Sessions</a>
+    <h1>{{ routine.name }}</h1>
+    {% if last_w %}<p class="muted">Last done {{ last_w.date }}</p>{% endif %}
+  </div>
+  <a class="btn primary" href="{{ url_for('run_routine', routine_id=routine.id) }}">Start session</a>
+</div>
+
+{% if has_history %}
+<div class="card chart-card">
+  <p class="label">Total weight lifted per session</p>
+  {{ volume_chart | safe }}
+</div>
+{% endif %}
+
+<div class="exercise-list">
+  {% for ex in exercises %}
+  <div class="card exercise-row">
+    {% set pb = pbs.get(ex.id) %}
+    <div class="ex-head">
+      <h3>{{ ex.position }}. {{ ex.name }}</h3>
+      {% if pb and pb.weight %}<span class="pb">🏆 PB {{ pb.weight | wt }}{% if pb.reps %} × {{ pb.reps }}{% endif %}</span>{% endif %}
+    </div>
+    {% if ex.notes %}<p class="notes">{{ ex.notes }}</p>{% endif %}
+    {% set spark = sparklines.get(ex.id) %}
+    {% if spark %}<div class="spark-wrap">{{ spark | safe }}<span class="muted small">volume trend</span></div>{% endif %}
+
+    {% set sets = last_sets.get(ex.id) %}
+    {% if sets %}
+      <p class="label">Last session:</p>
+      <div class="sets">
+        {% for s in (1, 2, 3) %}
+          {% set row = sets.get(s) %}
+          {% if row %}
+          <span class="set-chip">
+            S{{ s }}: {{ row.weight | wt }}
+            {%- if row.reps is not none %} × {{ row.reps }}{% endif %}
+          </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% elif ex.start_weight %}
+      <p class="muted small">Starting weight: {{ ex.start_weight | wt }}</p>
+    {% else %}
+      <p class="muted small">No history yet</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="sticky-action">
+  <a class="btn primary big" href="{{ url_for('run_routine', routine_id=routine.id) }}">Start this session</a>
+</div>
+{% endblock %}

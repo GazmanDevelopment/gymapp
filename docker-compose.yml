@@ -1,0 +1,21 @@
+services:
+  gymtracker:
+    build: .
+    container_name: gymtracker
+    ports:
+      - "8000:8000"
+    environment:
+      # CHANGE THESE before any real use:
+      APP_USERNAME: "${APP_USERNAME:-admin}"
+      APP_PASSWORD: "${APP_PASSWORD:-changeme}"
+      SECRET_KEY: "${SECRET_KEY:-please-change-this-secret}"
+      GYM_DB_PATH: /data/gym.db
+      GYM_XLSX_PATH: /seed/Exercises_2.xlsx
+    volumes:
+      - gym-data:/data
+      # Mount the source spreadsheet read-only for first-run seeding:
+      - ../Exercises_2.xlsx:/seed/Exercises_2.xlsx:ro
+    restart: unless-stopped
+
+volumes:
+  gym-data:

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}History — Gym Tracker{% endblock %}
+{% block content %}
+<h1>History</h1>
+{% if not workouts %}
+  <p class="muted">No workouts logged yet.</p>
+{% else %}
+<div class="exercise-list">
+  {% for w in workouts %}
+  <a class="card history-row" href="{{ url_for('workout_detail', workout_id=w.id) }}">
+    <span class="h-date">{{ w.date }}</span>
+    <span class="h-name">{{ w.routine_name }}</span>
+    <span class="muted small">›</span>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

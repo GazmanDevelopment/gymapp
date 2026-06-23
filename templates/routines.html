@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sessions — Gym Tracker{% endblock %}
+{% block content %}
+<h1>Choose a session</h1>
+<div class="grid">
+  {% for c in cards %}
+  <a class="card routine-card" href="{{ url_for('routine_detail', routine_id=c.id) }}">
+    <h2>{{ c.name }}</h2>
+    <p class="muted">{{ c.exercise_count }} exercise{{ '' if c.exercise_count == 1 else 's' }}</p>
+    <p class="muted small">
+      {% if c.last_date %}
+        Last Session: {{ c.last_date }}
+        {%- if c.days_since is not none %}
+          ({% if c.days_since == 0 %}today{% elif c.days_since == 1 %}1 day{% else %}{{ c.days_since }} days{% endif %})
+        {%- endif %}
+      {% else %}Not done yet{% endif %}
+    </p>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

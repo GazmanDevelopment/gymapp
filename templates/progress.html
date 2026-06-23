@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Progress — Gym Tracker{% endblock %}
+{% block content %}
+<h1>Progress</h1>
+<p class="muted">Total weight lifted per session (Σ weight × reps).</p>
+
+{% if not blocks %}
+  <p class="muted">No workouts logged yet — run a session to start tracking progress.</p>
+{% else %}
+  {% for b in blocks %}
+  <div class="card chart-card">
+    <div class="ex-head">
+      <h3><a class="plain" href="{{ url_for('routine_detail', routine_id=b.id) }}">{{ b.name }}</a></h3>
+      <span class="muted small">{{ b.sessions }} session{{ '' if b.sessions == 1 else 's' }}</span>
+    </div>
+    <p class="muted small">Latest {{ b.latest | wt }} · best {{ b.best | wt }}</p>
+    {{ b.chart | safe }}
+  </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}

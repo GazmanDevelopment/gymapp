@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Run {{ routine.name }} — Gym Tracker{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <a class="back" href="{{ url_for('routine_detail', routine_id=routine.id) }}">← Cancel</a>
+    <h1>{{ routine.name }}</h1>
+  </div>
+</div>
+
+<form method="post" class="run-form">
+  <div class="card">
+    <label class="date-label">Date
+      <input type="date" name="date" value="{{ today }}">
+    </label>
+  </div>
+
+  {% for ex in exercises %}
+  {% set sets = last_sets.get(ex.id) %}
+  <div class="card exercise-row">
+    {% set pb = pbs.get(ex.id) %}
+    <div class="ex-head">
+      <h3>{{ ex.position }}. {{ ex.name }}</h3>
+      {% if pb and pb.weight %}<span class="pb">🏆 PB {{ pb.weight | wt }}{% if pb.reps %} × {{ pb.reps }}{% endif %}</span>{% endif %}
+    </div>
+    {% if ex.notes %}<p class="notes">{{ ex.notes }}</p>{% endif %}
+
+    <div class="set-grid">
+      <div class="set-grid-head">
+        <span></span><span>Weight</span><span>Reps</span><span class="last-col">Last</span>
+      </div>
+      {% for s in (1, 2, 3) %}
+      {% set row = sets.get(s) if sets else None %}
+      {% set ph = row.weight if (row and row.weight is not none) else ex.start_weight %}
+      <div class="set-grid-row">
+        <span class="set-num">Set {{ s }}</span>
+        <input type="number" step="any" inputmode="decimal" name="w_{{ ex.id }}_{{ s }}"
+               placeholder="{{ ph | wt if ph is not none else '' }}">
+        <input type="number" step="1" inputmode="numeric" name="r_{{ ex.id }}_{{ s }}"
+               placeholder="{{ row.reps if (row and row.reps is not none) else '' }}">
+        <span class="last-col muted small">
+          {%- if row %}{{ row.weight | wt }}{% if row.reps is not none %}×{{ row.reps }}{% endif %}{% else %}—{% endif -%}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="sticky-action">
+    <button type="submit" class="btn primary big">Save session</button>
+  </div>
+</form>
+{% endblock %}
