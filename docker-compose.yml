@@ -10,11 +10,11 @@ services:
       APP_PASSWORD: "${APP_PASSWORD:-changeme}"
       SECRET_KEY: "${SECRET_KEY:-please-change-this-secret}"
       GYM_DB_PATH: /data/gym.db
-      GYM_XLSX_PATH: /seed/Exercises_2.xlsx
+      # The spreadsheet is committed to the repo root, so the build bakes it
+      # into the image at /app/Exercises_2.xlsx (no host mount needed).
+      GYM_XLSX_PATH: /app/Exercises_2.xlsx
     volumes:
       - gym-data:/data
-      # Mount the source spreadsheet read-only for first-run seeding:
-      - ../Exercises_2.xlsx:/seed/Exercises_2.xlsx:ro
     restart: unless-stopped
 
 volumes:
